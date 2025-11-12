@@ -80,7 +80,7 @@
             <% bestContactTimes.each { %>
                 <div id="time-entry-${ it.label.replaceAll(" ", "-") }" class="time-entry">
                     <label for="time-label-${ it.label.replaceAll(" ", "-") }" class="time-label">
-                        ${ it.label.replaceAll(" ", "-")}
+                        ${ ui.message("messages.dashboard.patient.label")
                     </label>
                     <span>
                         <input
