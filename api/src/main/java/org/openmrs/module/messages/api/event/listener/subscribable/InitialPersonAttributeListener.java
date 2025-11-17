@@ -10,6 +10,7 @@
 
 package org.openmrs.module.messages.api.event.listener.subscribable;
 
+import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
@@ -17,8 +18,10 @@ import org.openmrs.event.Event;
 import org.openmrs.module.messages.api.model.PersonStatus;
 import org.openmrs.module.messages.api.service.ConfigService;
 import org.openmrs.module.messages.api.constants.ConfigConstants;
+import org.openmrs.module.messages.api.service.DefaultPatientTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.interceptor.TransactionProxyFactoryBean;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +35,8 @@ public class InitialPersonAttributeListener extends PeopleActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(InitialPersonAttributeListener.class);
 
     private ConfigService configService;
+
+    private DefaultPatientTemplateService defaultPatientTemplateService;
 
     /**
      * Defines the list of Actions which will be performed {@link #performAction(Message)} by this listener
@@ -52,6 +57,7 @@ public class InitialPersonAttributeListener extends PeopleActionListener {
         LOGGER.debug("Creating attribute for {} person", person);
         person.addAttribute(createStatusAttribute(person));
         getPersonService().savePerson(person);
+        generateAndSaveTemplate((Patient) person);
     }
 
     public void setConfigService(ConfigService configService) {
@@ -75,5 +81,13 @@ public class InitialPersonAttributeListener extends PeopleActionListener {
             status = PersonStatus.NO_CONSENT;
         }
         return status;
+    }
+
+    private void generateAndSaveTemplate(Patient patient) {
+        defaultPatientTemplateService.generateDefaultPatientTemplates(patient);
+    }
+
+    public void setDefaultPatientTemplateService(TransactionProxyFactoryBean defaultPatientTemplateService) {
+        this.defaultPatientTemplateService = (DefaultPatientTemplateService) defaultPatientTemplateService;
     }
 }
