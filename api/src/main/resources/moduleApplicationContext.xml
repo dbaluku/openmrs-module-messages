@@ -506,6 +506,7 @@
           destroy-method="close"
           parent="messages.peopleActionListener">
         <property name="configService" ref="messages.configService"/>
+        <property name="patientService" ref="patientService"/>
         <property name="defaultPatientTemplateService" ref="messages.defaultPatientTemplateService"/>
     </bean>
 
